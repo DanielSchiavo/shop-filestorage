@@ -58,7 +58,7 @@ class FileStorageProdutoControllerTest {
 	@DisplayName("Deletar arquivo produto deve retornar http 204 quando token e parametro válidos são enviados")
 	void deletarArquivoProduto_TokenAdminEParametroValido_DeveRetornarOkNoContent() throws IOException, Exception {
 		//ARRANGE
-		doNothing().when(fileStorageService).deletarArquivoProdutoNoDisco(any());
+		doNothing().when(fileStorageService).deletarImagens(any());
 
 		//ACT
 		String nomeArquivo = "Nomequalquer.jpeg";
@@ -103,7 +103,7 @@ class FileStorageProdutoControllerTest {
 		ArquivoInfoDTO arquivoInfoDTO = new ArquivoInfoDTO("Imagemum.jpeg", bytesImagem);
 		ArquivoInfoDTO arquivoInfoDTO2 = new ArquivoInfoDTO("Imagemdois.jpeg", bytesImagem);
 		List<ArquivoInfoDTO> listaArquivoInfoDTO = new ArrayList<>(List.of(arquivoInfoDTO, arquivoInfoDTO2));
-		when(fileStorageService.mostrarArquivoProdutoPorListaDeNomes(any())).thenReturn(listaArquivoInfoDTO);
+		when(fileStorageService.pegarImagens(any())).thenReturn(listaArquivoInfoDTO);
 		
 		//ACT
 		String imagem1 = "Imagemum.jpeg";
@@ -147,7 +147,7 @@ class FileStorageProdutoControllerTest {
 	void mostrarArquivoProdutoPorNome_TokenEDtoValido_DeveRetornarOk() throws IOException, Exception {
 		//ARRANGE
 		ArquivoInfoDTO arquivoInfoDTO = new ArquivoInfoDTO("Imagemum.jpeg", "Hello world".getBytes());
-		when(fileStorageService.pegarArquivoProdutoPorNome(any())).thenReturn(arquivoInfoDTO);
+		when(fileStorageService.pegarImagens(any())).thenReturn(arquivoInfoDTO);
 		
 		//ACT
 		String nomeArquivo = "Imagemum.jpeg";
@@ -195,7 +195,7 @@ class FileStorageProdutoControllerTest {
 		ArquivoInfoDTO arquivoInfoDTO = new ArquivoInfoDTO("Imagemum.jpeg", bytesImagem);
 		ArquivoInfoDTO arquivoInfoDTO2 = new ArquivoInfoDTO("Imagemdois.jpeg", bytesImagem);
 		List<ArquivoInfoDTO> listaArquivoInfoDTO = new ArrayList<>(List.of(arquivoInfoDTO, arquivoInfoDTO2));
-		when(fileStorageService.persistirArrayArquivoProduto(any(), any())).thenReturn(listaArquivoInfoDTO);
+		when(fileStorageService.persistirImagens(any(), any())).thenReturn(listaArquivoInfoDTO);
 		
 		//ACT
         MockMultipartFile file1 = new MockMultipartFile("arquivos", "Imagemum.jpeg", MediaType.TEXT_PLAIN_VALUE, bytesImagem);

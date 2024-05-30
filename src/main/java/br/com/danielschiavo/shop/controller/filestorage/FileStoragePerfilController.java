@@ -1,7 +1,6 @@
 package br.com.danielschiavo.shop.controller.filestorage;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.NoSuchFileException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +34,11 @@ public class FileStoragePerfilController {
 	@Autowired
 	private FileStoragePerfilService fileStoragePerfilService;
 	
-	@DeleteMapping("/cliente/filestorage/perfil/{nomeFotoPerfil}")
+	@DeleteMapping("/cliente/perfil/{nomeFotoPerfil}")
 	@Operation(summary = "Deleta a foto de perfil com o nome enviado no parametro da requisição")
 	public ResponseEntity<?> deletarFotoPerfil(@PathVariable String nomeFotoPerfil) {
 		try {
-			ArquivoInfoDTO respostaDeletarFotoPerfil = fileStoragePerfilService.deletarFotoPerfilNoDisco(nomeFotoPerfil);
+			String respostaDeletarFotoPerfil = fileStoragePerfilService.deletarFotoPerfilNoDisco(nomeFotoPerfil);
 			return ResponseEntity.ok().body(respostaDeletarFotoPerfil);
 		} catch (ValidacaoException e) {
 			HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -54,7 +53,7 @@ public class FileStoragePerfilController {
 		}
 	}
 	
-	@GetMapping("/cliente/filestorage/perfil/{nomeFotoPerfil}")
+	@GetMapping("/cliente/perfil/{nomeFotoPerfil}")
 	@Operation(summary = "Pega uma foto de perfil dado o nome da foto no parametro da requisição")
 	public ResponseEntity<ArquivoInfoDTO> pegarFotoPerfilPorNome(@PathVariable String nomeFotoPerfil) {
 		ArquivoInfoDTO arquivo = fileStoragePerfilService.pegarFotoPerfilPorNome(nomeFotoPerfil);
@@ -62,39 +61,24 @@ public class FileStoragePerfilController {
 		return ResponseEntity.ok(arquivo);
 	}
 	
-	@PostMapping("/cliente/filestorage/perfil/")
+	@PostMapping("/cliente/perfil/")
 	@Operation(summary = "Cadastra uma foto de perfil enviada através de um formulario html e gera um nome")
 	public ResponseEntity<?> cadastrarFotoPerfil(
-			@RequestPart(name = "foto", required = true) MultipartFile foto,
-			UriComponentsBuilder uriBuilder
-			) {
-		ArquivoInfoDTO arquivoInfoDTO = fileStoragePerfilService.persistirFotoPerfil(foto, uriBuilder);
-		
-		if (arquivoInfoDTO.erro() == null) {
-			URI uri = uriBuilder.path("/shop/admin/filestorage/foto-perfil/" + arquivoInfoDTO.nomeArquivo()).build().toUri();
-			return ResponseEntity.created(uri).body(arquivoInfoDTO);
-		}
-		else {
-			return ResponseEntity.badRequest().body(arquivoInfoDTO);
-		}
-		
+			@RequestPart(name = "foto", required = true) MultipartFile foto) {
+		String respostaPersistirFotoPerfil = fileStoragePerfilService.persistirFotoPerfil(foto);
 
+		return ResponseEntity.ok().body(respostaPersistirFotoPerfil);
 	}
 	
-	@PutMapping("/cliente/filestorage/perfil/{nomeFotoPerfilAntiga}")
+	@PutMapping("/cliente/{nomeFotoPerfilAntiga}")
 	@Operation(summary = "Deleta o nomeAntigoDoArquivo e salva o arquivo enviado e gera um novo nome")
 	public ResponseEntity<?> alterarFotoPerfil(
 			@RequestPart(name = "foto", required = true) MultipartFile novaFoto,
 			@RequestParam String nomeFotoPerfilAntiga,
 			UriComponentsBuilder uriBuilder
 			) {
-		ArquivoInfoDTO arquivoInfoDTO = fileStoragePerfilService.alterarFotoPerfil(novaFoto, nomeFotoPerfilAntiga);
+		String respostaAlterarFotoPerfil = fileStoragePerfilService.alterarFotoPerfil(novaFoto, nomeFotoPerfilAntiga);
 		
-		if (arquivoInfoDTO.erro() == null) {
-			return ResponseEntity.ok(arquivoInfoDTO);
-		}
-		else {
-			return ResponseEntity.badRequest().body(arquivoInfoDTO);
-		}
+		return ResponseEntity.ok(respostaAlterarFotoPerfil);
 	}
 }

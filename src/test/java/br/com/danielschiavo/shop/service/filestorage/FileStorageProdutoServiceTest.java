@@ -60,7 +60,7 @@ class FileStorageProdutoServiceTest {
         	
         	//ACT
         	String arquivo = "teste.jpeg";
-        	fileStorageProdutoService.deletarArquivoProdutoNoDisco(new ArrayList<>(List.of(arquivo)));
+        	fileStorageProdutoService.deletarImagens(new ArrayList<>(List.of(arquivo)));
 
         	//ASSERT
             mockedFiles.verify(() -> Files.delete(pathEsperado.resolve(arquivo)), Mockito.times(1));
@@ -76,7 +76,7 @@ class FileStorageProdutoServiceTest {
         	mockedFiles.when(() -> Files.delete(pathEsperado)).thenThrow(IOException.class);
 
         	//ASSERT + ACT
-        	Assertions.assertThrows(FileStorageException.class, () -> fileStorageProdutoService.deletarArquivoProdutoNoDisco(new ArrayList<>(List.of("teste.jpeg"))));
+        	Assertions.assertThrows(FileStorageException.class, () -> fileStorageProdutoService.deletarImagens(new ArrayList<>(List.of("teste.jpeg"))));
         }
     }
     
@@ -89,7 +89,7 @@ class FileStorageProdutoServiceTest {
         Mockito.doReturn(bytes).when(fileStorageProdutoService).recuperarBytesArquivoProdutoDoDisco(any());
         
         //ACT
-        List<ArquivoInfoDTO> resultado = fileStorageProdutoService.mostrarArquivoProdutoPorListaDeNomes(nomesArquivos);
+        List<ArquivoInfoDTO> resultado = fileStorageProdutoService.pegarImagens(nomesArquivos);
 
         //ASSERT
         Assertions.assertEquals(2, resultado.size());
@@ -110,7 +110,7 @@ class FileStorageProdutoServiceTest {
         Mockito.doReturn(bytes).when(fileStorageProdutoService).recuperarBytesArquivoProdutoDoDisco("arquivo3.jpeg");
         
         //ACT
-        List<ArquivoInfoDTO> resultado = fileStorageProdutoService.mostrarArquivoProdutoPorListaDeNomes(nomesArquivos);
+        List<ArquivoInfoDTO> resultado = fileStorageProdutoService.pegarImagens(nomesArquivos);
 
         //ASSERT
         Assertions.assertEquals(3, resultado.size());
@@ -171,7 +171,7 @@ class FileStorageProdutoServiceTest {
         	//ACT
         	MultipartFile[] arquivos = {arquivo1, arquivo2};
         	UriComponentsBuilder uriBuilderBase = UriComponentsBuilder.fromUriString("http://localhost:8080");
-        	List<ArquivoInfoDTO> resultado = fileStorageProdutoService.persistirArrayArquivoProduto(arquivos, uriBuilderBase);
+        	List<ArquivoInfoDTO> resultado = fileStorageProdutoService.persistirImagens(arquivos, uriBuilderBase);
         	
         	//ASSERT
         	Assertions.assertNotNull(resultado);
@@ -197,7 +197,7 @@ class FileStorageProdutoServiceTest {
         //ACT
         MultipartFile[] arquivos = {arquivo1, arquivo2};
         UriComponentsBuilder uriBuilderBase = UriComponentsBuilder.fromUriString("http://localhost:8080");
-        List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.persistirArrayArquivoProduto(arquivos, uriBuilderBase);
+        List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.persistirImagens(arquivos, uriBuilderBase);
         	
         //ASSERT
         Assertions.assertNotNull(listaArquivoInfoDTO.get(0).erro());
@@ -225,7 +225,7 @@ class FileStorageProdutoServiceTest {
         	MultipartFile[] arquivos = {arquivo1, arquivo2};
         	String nomesArquivosASeremExcluidos = "arquivoexcluido1.jpg, arquivoexcluido2.jpg";
         	UriComponentsBuilder uriBuilderBase = UriComponentsBuilder.fromUriString("http://localhost:8080");
-        	List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.alterarArrayArquivoProduto(arquivos, nomesArquivosASeremExcluidos, uriBuilderBase);
+        	List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.alterarImagens(arquivos, nomesArquivosASeremExcluidos, uriBuilderBase);
         	
         	//ASSERT
         	Assertions.assertEquals(2, listaArquivoInfoDTO.size());
@@ -257,7 +257,7 @@ class FileStorageProdutoServiceTest {
         	MultipartFile[] arquivos = {arquivo1, arquivo2};
         	String nomesArquivosASeremExcluidos = "arquivoexcluido1.jpg, arquivoexcluido2.jpg";
         	UriComponentsBuilder uriBuilderBase = UriComponentsBuilder.fromUriString("http://localhost:8080");
-        	List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.alterarArrayArquivoProduto(arquivos, nomesArquivosASeremExcluidos, uriBuilderBase);
+        	List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.alterarImagens(arquivos, nomesArquivosASeremExcluidos, uriBuilderBase);
         	
         	//ASSERT
         	Assertions.assertEquals(4, listaArquivoInfoDTO.size());
@@ -285,7 +285,7 @@ class FileStorageProdutoServiceTest {
         	MultipartFile[] arquivos = {arquivo1, arquivo2};
         	String nomesArquivosASeremExcluidos = "arquivoexcluido1.jpg, arquivoexcluido2.jpg";
         	UriComponentsBuilder uriBuilderBase = UriComponentsBuilder.fromUriString("http://localhost:8080");
-        	List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.alterarArrayArquivoProduto(arquivos, nomesArquivosASeremExcluidos, uriBuilderBase);
+        	List<ArquivoInfoDTO> listaArquivoInfoDTO = fileStorageProdutoService.alterarImagens(arquivos, nomesArquivosASeremExcluidos, uriBuilderBase);
         	
         	//ASSERT
         	Assertions.assertEquals(2, listaArquivoInfoDTO.size());

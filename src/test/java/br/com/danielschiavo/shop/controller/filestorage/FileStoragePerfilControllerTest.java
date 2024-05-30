@@ -140,7 +140,7 @@ class FileStoragePerfilControllerTest {
 		//ARRANGE
 		byte[] bytesImagem = "Hello world".getBytes();
 		ArquivoInfoDTO arquivoInfoDTO = new ArquivoInfoDTO("Imagemum.jpeg", bytesImagem);
-		when(fileStorageService.persistirFotoPerfil(any(), any())).thenReturn(arquivoInfoDTO);
+		when(fileStorageService.persistirFotoPerfil(any())).thenReturn(arquivoInfoDTO.nomeArquivo());
 		
 		//ACT
         MockMultipartFile file1 = new MockMultipartFile("foto", "Imagemum.jpeg", MediaType.TEXT_PLAIN_VALUE, bytesImagem);

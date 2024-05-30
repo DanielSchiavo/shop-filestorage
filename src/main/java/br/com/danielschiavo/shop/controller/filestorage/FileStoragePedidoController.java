@@ -28,7 +28,7 @@ public class FileStoragePedidoController {
 	@Autowired
 	private FileStoragePedidoService fileStoragePedidoService;
 	
-	@GetMapping("/cliente/filestorage/pedido/{nomeImagemPedido}")
+	@GetMapping("/cliente/pedido/{nomeImagemPedido}")
 	@Operation(summary = "Recupera os bytes da imagem do pedido dado o nome no parametro da requisição")
 	public ResponseEntity<ArquivoInfoDTO> pegarImagemPedidoPorNome(@PathVariable String nomeImagemPedido) {
 		ArquivoInfoDTO arquivo = fileStoragePedidoService.pegarImagemPedidoPorNome(nomeImagemPedido);
@@ -36,7 +36,7 @@ public class FileStoragePedidoController {
 		return ResponseEntity.ok(arquivo);
 	}
 	
-	@PostMapping("/cliente/filestorage/pedido")
+	@PostMapping("/cliente/pedido")
 	@Operation(summary = "Cadastra uma nova imagem do pedido e devolve o nome e os bytes da imagem, ou, se já tiver uma imagem cadastrada devolve o nome e os bytes da imagem já cadastrada")
 	public ResponseEntity<?> persistirOuRecuperarImagemPedido(
 			@RequestBody PersistirOuRecuperarImagemPedidoDTO postImagemPedidoDTO,

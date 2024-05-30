@@ -7,11 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileUrlResource;
 import org.springframework.stereotype.Service;
 
 import br.com.danielschiavo.shop.model.FileStorageException;
@@ -20,54 +18,32 @@ import br.com.danielschiavo.shop.model.filestorage.ArquivoInfoDTO;
 @Service
 public class FileStoragePedidoService {
 	
+	@Autowired
+	private FileStorageService fileStorageService;
+	
 	private final Path raizPedido = Paths.get("imagens/pedido");
 	
-	@Autowired
-	private FileStorageProdutoService fileProdutoService;
-	
 	public ArquivoInfoDTO pegarImagemPedidoPorNome(String nomeArquivo) {
-		byte[] bytes = recuperarBytesImagemPedidoDoDisco(nomeArquivo);
-		return new ArquivoInfoDTO(nomeArquivo, bytes);
+		ArquivoInfoDTO arquivoInfoDTO = (ArquivoInfoDTO) fileStorageService.recuperarBytesImagemDoDisco(FileStorageProdutoService.raizProduto, nomeArquivo);
+		return arquivoInfoDTO;
 	}
 	
 	public String persistirOuRecuperarImagemPedido(String nomePrimeiraImagemProduto, Long idProduto) {
-		String arquivoInfoDTO = verificarSeExisteImagemPedidoNoDisco(nomePrimeiraImagemProduto);
-		if (arquivoInfoDTO != null) {
-			return arquivoInfoDTO;
+		String nomeImagemPedido = verificarSeExisteImagemPedidoNoDisco(nomePrimeiraImagemProduto);
+		if (nomeImagemPedido != null) {
+			return nomeImagemPedido;
 		}
 		else {
-			String novoNomeImagemPedidoGerado = gerarNomeImagemPedido(idProduto, nomePrimeiraImagemProduto);
-			salvarNoDiscoImagemPedido(novoNomeImagemPedidoGerado, nomePrimeiraImagemProduto);
-			return novoNomeImagemPedidoGerado;
+			String nomeImagemPedidoGerado = gerarNomeImagemPedido(idProduto, nomePrimeiraImagemProduto);
+			ArquivoInfoDTO arquivoInfoDTO = (ArquivoInfoDTO) fileStorageService.recuperarBytesImagemDoDisco(FileStorageProdutoService.raizProduto, nomePrimeiraImagemProduto);
+			fileStorageService.salvarNoDisco(raizPedido, nomeImagemPedidoGerado, arquivoInfoDTO.bytesArquivo());
+			return nomeImagemPedidoGerado;
 		}
 	}
 	
 //
 // METODOS UTILITARIOS DE PEDIDO
 //	
-	
-	public byte[] recuperarBytesImagemPedidoDoDisco(String nomeArquivo) {
-		FileUrlResource fileUrlResource;
-		try {
-			fileUrlResource = new FileUrlResource(raizPedido + "/" + nomeArquivo);
-			return fileUrlResource.getContentAsByteArray();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new FileStorageException("Não foi possivel recuperar os bytes da imagem nome " + nomeArquivo + ", motivo: " + e);
-		}
-	}
-
-	private byte[] salvarNoDiscoImagemPedido(String novoNomeImagemPedidoGerado, String nomePrimeiraImagemProduto) {
-		try {
-			ArquivoInfoDTO arquivoInfoDTO = fileProdutoService.pegarArquivoProdutoPorNome(nomePrimeiraImagemProduto);
-			byte[] bytes = arquivoInfoDTO.bytesArquivo();
-			Files.write(this.raizPedido.resolve(novoNomeImagemPedidoGerado), bytes, StandardOpenOption.CREATE_NEW);
-			return bytes;
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new FileStorageException("Não foi possivel salvar o arquivo " + novoNomeImagemPedidoGerado + " no disco");
-		}
-	}
 
 	private String gerarNomeImagemPedido(Long idProduto, String nomePrimeiraImagemProduto) {
 		String[] split = nomePrimeiraImagemProduto.split("\\.");
